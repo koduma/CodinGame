@@ -89,7 +89,8 @@ int evalScore(GameState state,int player){
     if(state.playerHealth[1-player]<=0){return INT_MAX;}
 
     int score=0;
-    score+=(state.playerHealth[player]-state.playerHealth[1-player])*2;
+    score+=(state.playerHealth[player])*2;
+    score-=(state.playerHealth[1-player])*2;
     //score+=state.playerHandsize[player]-state.playerHandsize[1-player];
     //score+=state.playerDeck[player]-state.playerDeck[1-player];
     for(int i=0;i<(int)state.myboard[player].size();i++){
@@ -125,6 +126,7 @@ int evalScore(GameState state,int player){
 }
 
 bool can_attack(GameState state,int player,int Attacker_num,int Target_num){
+    if(state.myboard[player][Attacker_num].attack<=0){return false;}
     if(state.myboard[player][Attacker_num].defense<=0){return false;}
 
     bool foundGuard=false;
@@ -487,7 +489,7 @@ int can_action(GameState state,int player){
     }
     ret|=(1<<1);
     for(int i=0;i<(int)state.myboard[player].size();i++){
-        if(state.myboard[player][i].is_summon==0&&state.myboard[player][i].is_attack==0&&state.myboard[player][i].defense>0){return ret;}
+        if(state.myboard[player][i].is_summon==0&&state.myboard[player][i].is_attack==0&&state.myboard[player][i].defense>0&&state.myboard[player][i].attack>0){return ret;}
     }
     ret|=(1<<2);
     return ret;
@@ -1014,6 +1016,8 @@ int main()
 
         start = chrono::system_clock::now();
 
+        iter=0;
+
         while(1){
 
         double elapsed = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - start).count() / 1000.;
@@ -1158,7 +1162,7 @@ int main()
         cerr<<"card_number="<<draft_card[i].cardNumber<<endl;
         cerr<<"win_rate="<<(double)priority[i]/(double)(priority[0]+priority[1]+priority[2])<<endl;
 
-        if(draft_card[i].cardNumber==116){
+        if(draft_card[i].cardNumber==145 || draft_card[i].cardNumber==146){
             //priority[i]=114514;
         }
 
